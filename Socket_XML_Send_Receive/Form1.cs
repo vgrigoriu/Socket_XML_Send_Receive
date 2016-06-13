@@ -26,7 +26,7 @@ namespace Socket_XML_Send_Receive
         private const int BUFSIZE = BUFSIZE_FULL - 4;
         private const int BACKLOG = 5; // dimensiunea cozii de asteptare pentru socket
         private const int TIMELIMIT = 30000; // timpul limita de ascultare pentru un client (3 sec.)
-        private static bool isValid = true;      // validare cu schema a unui XML
+        private bool isValid = true;      // validare cu schema a unui XML
         // XmlSchemaCollection cache = new XmlSchemaCollection(); //cache XSD schema
         // cache.Add("urn:MyNamespace", "C:\\MyFolder\\Product.xsd"); // add namespace XSD schema
 
@@ -40,8 +40,7 @@ namespace Socket_XML_Send_Receive
         }
         private string FindLocalIP()
         {
-            string strHostName = "";
-            strHostName = System.Net.Dns.GetHostName();
+            string strHostName = System.Net.Dns.GetHostName();
             IPHostEntry ipEntry = System.Net.Dns.GetHostEntry(strHostName);
             IPAddress[] addr = ipEntry.AddressList;
             return addr[addr.Length - 1].ToString();
@@ -61,7 +60,6 @@ namespace Socket_XML_Send_Receive
         {
             XmlTextReader r = new XmlTextReader(file);
             var v = new XmlReaderSettings();
-            //v.Schemas.Add(cache);
             if (radioButton1.Checked)
             {
                 v.ValidationType = ValidationType.Schema;
@@ -81,9 +79,6 @@ namespace Socket_XML_Send_Receive
             while (xmlReader.Read())
             {
                 // Can add code here to process the content
-                // bool Success = true;
-                // Console.WriteLine("Validation finished. Validation {0}", (Success == true ? "successful" : "failed"));
-                // Path.GetExtension(label11.Text).Substring(1).ToUpper()
             }
             xmlReader.Close();
             if (isValid)
@@ -215,10 +210,8 @@ namespace Socket_XML_Send_Receive
                                 Debug("SERVER: receptionat " + (totalBytesReceived - 4) + " bytes");
                                 if (checkBox3.Checked)
                                 {
-                                    /*
                                     client1.Send(rcvBuffer_partial, 0, rcvBuffer_partial.Length, SocketFlags.None);
                                     Debug("SERVER: expediat echo data catre client.");
-                                    */
                                 }
                             }
                             else
@@ -300,10 +293,8 @@ namespace Socket_XML_Send_Receive
                                 Debug("SERVER: receptionat " + totalBytesReceived + " bytes");
                                 if (checkBox3.Checked)
                                 {
-                                    /*
                                     client1.Send(rcvBuffer_partial, 0, rcvBuffer_partial.Length, SocketFlags.None);
                                     Debug("SERVER: expediat echo data catre client.");
-                                    */
                                 }
                             }
                         }
@@ -369,7 +360,6 @@ namespace Socket_XML_Send_Receive
                         server2.Send(buff_partial, 0, buff_partial.Length, SocketFlags.None);
                         if (checkBox3.Checked)
                         {
-                            /*
                             byte[] buff_receive_full = new byte[BUFSIZE_FULL];
                             byte[] buff_receive_partial = new byte[BUFSIZE];
                             server2.Receive(buff_receive_full, 0, buff_receive_full.Length, SocketFlags.None);
@@ -391,13 +381,8 @@ namespace Socket_XML_Send_Receive
                                 default:
                                     //
                                     break;
-                            };
-                            // cod de la Gino prin care fac trecerea byte > char > string
-                            //server2.Receive(buff_receive, SocketFlags.None);
-                            //char[] result = System.Text.Encoding.ASCII.GetChars(buff_receive);
-                            //string resultString = new String(result);     
+                            }
                             Debug("CLIENT: receptionat echo data de la server socket.");
-                            */ 
                         }
                     }
                     else
@@ -424,7 +409,6 @@ namespace Socket_XML_Send_Receive
                         server2.Send(buff_full, 0, buff_full.Length, SocketFlags.None);
                         if (checkBox3.Checked)
                         {
-                            /*
                             byte[] buff_receive_full = new byte[BUFSIZE_FULL];
                             byte[] buff_receive_partial = new byte[BUFSIZE];
                             server2.Receive(buff_receive_full, 0, buff_receive_full.Length, SocketFlags.None);
@@ -446,13 +430,8 @@ namespace Socket_XML_Send_Receive
                                 default:
                                     //
                                     break;
-                            };
-                            // cod de la Gino prin care fac trecerea byte > char > string
-                            //server2.Receive(buff_receive, SocketFlags.None);
-                            //char[] result = System.Text.Encoding.ASCII.GetChars(buff_receive);
-                            //string resultString = new String(result);     
+                            }
                             Debug("CLIENT: receptionat echo data de la server socket.");
-                            */ 
                         }
                     }
                     Debug("CLIENT: date expediate de la client la server socket.");
@@ -513,14 +492,11 @@ namespace Socket_XML_Send_Receive
             OpenFileDialog fDialog = new OpenFileDialog();
             fDialog.Title = "Select XSD/DTD/XDR File";
             fDialog.Filter = "XSD Files|*.xsd|DTD Files|*.dtd|XDR Files|*.xdr";
-            //fDialog.Filter = "XSD Files|*.xsd|DTD Files|*.dtd|XDR Files|*.xdr|All Files|*.*";
             fDialog.ShowHelp = false;
             fDialog.CheckFileExists = true;
             fDialog.CheckPathExists = true;
             fDialog.AddExtension = true;
             fDialog.InitialDirectory = @Application.StartupPath;
-            //fDialog.InitialDirectory =@Environment.GetFolderPath(System.Environment.SpecialFolder.DesktopDirectory).ToString();
-            //fDialog.InitialDirectory = @"C:\";
             if (fDialog.ShowDialog() == DialogResult.OK)
             {
                 label3.Text = fDialog.FileName.ToString();
@@ -542,7 +518,6 @@ namespace Socket_XML_Send_Receive
             if (button3.Text == "Listen ON")
             {
                 button3.Text = "Listen OFF";
-                //button1.Enabled = true;
                 workerThread1 = new Thread(Listener);
                 workerThread1.Start();
 
@@ -550,7 +525,6 @@ namespace Socket_XML_Send_Receive
             else
             {
                 button3.Text = "Listen ON";
-                //button1.Enabled = false;
                 try
                 {
                     if (server1 != null)
@@ -584,14 +558,11 @@ namespace Socket_XML_Send_Receive
             OpenFileDialog fDialog = new OpenFileDialog();
             fDialog.Title = "Select XML File";
             fDialog.Filter = "XML Files|*.xml";
-            //fDialog.Filter = "XML Files|*.xml|All Files|*.*";
             fDialog.ShowHelp = false;
             fDialog.CheckFileExists = true;
             fDialog.CheckPathExists = true;
             fDialog.AddExtension = true;
             fDialog.InitialDirectory = @Application.StartupPath;
-            //fDialog.InitialDirectory =@Environment.GetFolderPath(System.Environment.SpecialFolder.DesktopDirectory).ToString();
-            //fDialog.InitialDirectory = @"C:\";
             if (fDialog.ShowDialog() == DialogResult.OK)
             {
                 isValid = true;
