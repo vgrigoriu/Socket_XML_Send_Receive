@@ -1,15 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Windows.Forms;
 using System.IO; // for File stream
 using System.Net; // for IpEndPoint
 using System.Net.Sockets; // for Sockets
+using System.Text;
 using System.Threading; // for Threads
+using System.Windows.Forms;
 using System.Xml; // for XmlTextReader and XmlValidatingReader
 using System.Xml.Schema; // for XmlSchemaCollection
 
@@ -18,18 +13,18 @@ namespace Socket_XML_Send_Receive
     public partial class Form1 : Form
     {
         // variabile, constante
-        private const int BUFSIZE_FULL = 8192; // dimensiunea completa a buffer-ului pentru socket
-        private const int BUFSIZE = BUFSIZE_FULL - 4;
+        private const int BUFSIZEFULL = 8192; // dimensiunea completa a buffer-ului pentru socket
+        private const int BUFSIZE = BUFSIZEFULL - 4;
         private const int BACKLOG = 5; // dimensiunea cozii de asteptare pentru socket
         private const int TIMELIMIT = 30000; // timpul limita de ascultare pentru un client (3 sec.)
         private Socket client1;
         private Socket server1;
         private Socket server2;
-        private string ip_ext;
+        private string ipExt;
         private string dt;
-        private string ClientIP_int;
-        private int port_send_ext;
-        private int port_listen_int;
+        private string clientIP;
+        private int portSendExt;
+        private int portListenInt;
         private Thread workerThread1;
         private bool isValid = true;      // validare cu schema a unui XML
 
@@ -110,34 +105,34 @@ namespace Socket_XML_Send_Receive
 #pragma warning restore RECS0135 // Function does not reach its end or a 'return' statement by any of possible execution paths
         {
             server1 = null;
-            byte[] rcvBuffer_full = new byte[BUFSIZE_FULL];
+            byte[] rcvBuffer_full = new byte[BUFSIZEFULL];
             byte[] rcvBuffer_partial = new byte[BUFSIZE];
-            port_listen_int = System.Convert.ToInt16(textBox3.Text);
+            portListenInt = System.Convert.ToInt16(textBox3.Text);
             using (server1 = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp))
             {
                 try
                 {
-                    server1.Bind(new IPEndPoint(IPAddress.Parse(textBox4.Text), port_listen_int));
+                    server1.Bind(new IPEndPoint(IPAddress.Parse(textBox4.Text), portListenInt));
                     server1.Listen(BACKLOG);
-                    Debug("SERVER: socket <" + textBox4.Text + ":" + port_listen_int + "> deschis");
+                    Debug("SERVER: socket <" + textBox4.Text + ":" + portListenInt + "> deschis");
                 }
                 catch (Exception ex)
                 {
-                    Debug("SERVER: probleme creare server socket <" + textBox4.Text + ":" + port_listen_int + ">");
+                    Debug("SERVER: probleme creare server socket <" + textBox4.Text + ":" + portListenInt + ">");
                     Debug(ex.ToString());
                 }
 
                 while (true)
                 {
                     client1 = null;
-                    ClientIP_int = null;
+                    clientIP = null;
                     int bytesRcvd = 0, totalBytesReceived = 0;
                     try
                     {
                         using (client1 = server1.Accept())
                         {
                             Debug("SERVER: client socket <" + client1.RemoteEndPoint.ToString() + "> conectat");
-                            ClientIP_int = client1.RemoteEndPoint.ToString().Split(':')[0];
+                            clientIP = client1.RemoteEndPoint.ToString().Split(':')[0];
                             while ((bytesRcvd = client1.Receive(rcvBuffer_full, 0, rcvBuffer_full.Length, SocketFlags.None)) > 0)
                             {
                                 if (totalBytesReceived >= rcvBuffer_full.Length)
@@ -349,16 +344,16 @@ namespace Socket_XML_Send_Receive
 
         private void Sender()
         {
-            ip_ext = textBox1.Text;
-            port_send_ext = System.Convert.ToInt16(textBox2.Text);
+            ipExt = textBox1.Text;
+            portSendExt = System.Convert.ToInt16(textBox2.Text);
             server2 = null;
             using (server2 = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp))
             {
                 try
                 {
-                    IPEndPoint serverEndPoint = new IPEndPoint(IPAddress.Parse(ip_ext), port_send_ext);
+                    IPEndPoint serverEndPoint = new IPEndPoint(IPAddress.Parse(ipExt), portSendExt);
                     server2.Connect(serverEndPoint);
-                    Debug("CLIENT: conectat la server socket <" + ip_ext + ":" + port_send_ext + ">");
+                    Debug("CLIENT: conectat la server socket <" + ipExt + ":" + portSendExt + ">");
                     if (checkBox1.Checked)
                     {
                         byte[] buff_full = null;
@@ -389,7 +384,7 @@ namespace Socket_XML_Send_Receive
                         server2.Send(buff_partial, 0, buff_partial.Length, SocketFlags.None);
                         if (checkBox3.Checked)
                         {
-                            byte[] buff_receive_full = new byte[BUFSIZE_FULL];
+                            byte[] buff_receive_full = new byte[BUFSIZEFULL];
                             byte[] buff_receive_partial = new byte[BUFSIZE];
                             server2.Receive(buff_receive_full, 0, buff_receive_full.Length, SocketFlags.None);
                             Array.Copy(buff_receive_full, 4, buff_receive_partial, 0, buff_receive_full.Length - 4);
@@ -438,7 +433,7 @@ namespace Socket_XML_Send_Receive
                         server2.Send(buff_full, 0, buff_full.Length, SocketFlags.None);
                         if (checkBox3.Checked)
                         {
-                            byte[] buff_receive_full = new byte[BUFSIZE_FULL];
+                            byte[] buff_receive_full = new byte[BUFSIZEFULL];
                             byte[] buff_receive_partial = new byte[BUFSIZE];
                             server2.Receive(buff_receive_full, 0, buff_receive_full.Length, SocketFlags.None);
                             Array.Copy(buff_receive_full, 4, buff_receive_partial, 0, buff_receive_full.Length - 4);
@@ -468,7 +463,7 @@ namespace Socket_XML_Send_Receive
                 }
                 catch (Exception ex)
                 {
-                    Debug("CLIENT: probleme conectare/trimitere de la client la server socket <" + ip_ext + ":" + port_send_ext + ">");
+                    Debug("CLIENT: probleme conectare/trimitere de la client la server socket <" + ipExt + ":" + portSendExt + ">");
                     Debug(ex.ToString());
                 }
                 finally
@@ -514,7 +509,7 @@ namespace Socket_XML_Send_Receive
             textBox4.Text = FindLocalIP();
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void Button2_Click(object sender, EventArgs e)
         {
             int size = -1;
             OpenFileDialog fDialog = new OpenFileDialog();
@@ -542,7 +537,7 @@ namespace Socket_XML_Send_Receive
             }
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void Button3_Click(object sender, EventArgs e)
         {
             if (button3.Text == "Listen ON")
             {
@@ -559,7 +554,7 @@ namespace Socket_XML_Send_Receive
                     {
                         server1.Close();
                         ((IDisposable)server1).Dispose();
-                        Debug("SERVER: socket <" + textBox4.Text + ":" + port_listen_int + "> inchis");
+                        Debug("SERVER: socket <" + textBox4.Text + ":" + portListenInt + "> inchis");
                     }
                 }
                 catch (Exception ex)
@@ -573,17 +568,17 @@ namespace Socket_XML_Send_Receive
             }
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void Button1_Click(object sender, EventArgs e)
         {
             Sender();
         }
 
-        private void button4_Click(object sender, EventArgs e)
+        private void Button4_Click(object sender, EventArgs e)
         {
             richTextBox3.Clear();
         }
 
-        private void button5_Click(object sender, EventArgs e)
+        private void Button5_Click(object sender, EventArgs e)
         {
             int size = -1;
             OpenFileDialog fDialog = new OpenFileDialog();
@@ -612,13 +607,13 @@ namespace Socket_XML_Send_Receive
             }
         }
 
-        private void button7_Click(object sender, EventArgs e)
+        private void Button7_Click(object sender, EventArgs e)
         {
             richTextBox1.Clear();
             richTextBox5.Clear();
         }
 
-        private void button6_Click(object sender, EventArgs e)
+        private void Button6_Click(object sender, EventArgs e)
         {
             richTextBox2.Clear();
         }
@@ -627,7 +622,7 @@ namespace Socket_XML_Send_Receive
         {
             if (button3.Text == "Listen OFF")
             {
-                button3_Click(sender, e);
+                Button3_Click(sender, e);
             }
         }
     }
