@@ -18,25 +18,32 @@ namespace Socket_XML_Send_Receive
     public partial class Form1 : Form
     {
         // variabile, constante
-        private Socket client1, server1, server2;
-        string ip_ext, dt, ClientIP_int;
-        int port_send_ext, port_listen_int;
-        private Thread workerThread1;
         private const int BUFSIZE_FULL = 8192; // dimensiunea completa a buffer-ului pentru socket
         private const int BUFSIZE = BUFSIZE_FULL - 4;
         private const int BACKLOG = 5; // dimensiunea cozii de asteptare pentru socket
         private const int TIMELIMIT = 30000; // timpul limita de ascultare pentru un client (3 sec.)
+        private Socket client1;
+        private Socket server1;
+        private Socket server2;
+        string ip_ext;
+        string dt;
+        string ClientIP_int;
+        int port_send_ext;
+        int port_listen_int;
+        private Thread workerThread1;
         private bool isValid = true;      // validare cu schema a unui XML
-        // XmlSchemaCollection cache = new XmlSchemaCollection(); //cache XSD schema
-        // cache.Add("urn:MyNamespace", "C:\\MyFolder\\Product.xsd"); // add namespace XSD schema
 
+        public Form1()
+        {
+            InitializeComponent();
+        }
 
         // metode complementare
         private string GetCurrentDT()
         {
             DateTime time = DateTime.Now;
             string format = "dd.MM.yyyy HH:mm:ss"; // 27.12.2011 18:34:55
-            return (time.ToString(format));
+            return time.ToString(format);
         }
         private string FindLocalIP()
         {
@@ -51,7 +58,7 @@ namespace Socket_XML_Send_Receive
             richTextBox3.AppendText(dt + " - " + str + ".\n");
             richTextBox3.ScrollToCaret();
         }
-        public void MyValidationEventHandler(object sender, ValidationEventArgs args)
+        private void MyValidationEventHandler(object sender, ValidationEventArgs args)
         {
             isValid = false;
             Debug("SERVER: Validation event\n" + args.Message);
@@ -68,8 +75,9 @@ namespace Socket_XML_Send_Receive
             {
                 v.ValidationType = ValidationType.DTD;
             }
-            else // (radioButton3.Checked)
+            else
             {
+                // (radioButton3.Checked)
                 // This used to be XDR, but apud MSDN it's deprecated.
                 // So, no validation.
                 v.ValidationType = ValidationType.None;
@@ -121,7 +129,7 @@ namespace Socket_XML_Send_Receive
                         using (client1 = server1.Accept())
                         {
                             Debug("SERVER: client socket <" + client1.RemoteEndPoint.ToString() + "> conectat");
-                            ClientIP_int = (client1.RemoteEndPoint.ToString()).Split(':')[0];
+                            ClientIP_int = client1.RemoteEndPoint.ToString().Split(':')[0];
                             while ((bytesRcvd = client1.Receive(rcvBuffer_full, 0, rcvBuffer_full.Length, SocketFlags.None)) > 0)
                             {
                                 if (totalBytesReceived >= rcvBuffer_full.Length)
@@ -136,11 +144,11 @@ namespace Socket_XML_Send_Receive
                                 switch (comboBox1.Text)
                                 {
                                     case "ASCII":
-                                        if ((checkBox2.Checked) && (label11.Text != ""))
+                                        if (checkBox2.Checked && (label11.Text != string.Empty))
                                         {
                                             if (Validation(label11.Text))
                                             {
-                                                richTextBox2.Text = Encoding.ASCII.GetString(rcvBuffer_partial, 0, (totalBytesReceived - 4));
+                                                richTextBox2.Text = Encoding.ASCII.GetString(rcvBuffer_partial, 0, totalBytesReceived - 4);
                                             }
                                             else
                                             {
@@ -149,15 +157,15 @@ namespace Socket_XML_Send_Receive
                                         }
                                         else
                                         {
-                                            richTextBox2.Text = Encoding.ASCII.GetString(rcvBuffer_partial, 0, (totalBytesReceived - 4));
+                                            richTextBox2.Text = Encoding.ASCII.GetString(rcvBuffer_partial, 0, totalBytesReceived - 4);
                                         }
                                         break;
                                     case "UTF7":
-                                        if ((checkBox2.Checked) && (label11.Text != ""))
+                                        if (checkBox2.Checked && (label11.Text != string.Empty))
                                         {
                                             if (Validation(label11.Text))
                                             {
-                                                richTextBox2.Text = Encoding.UTF7.GetString(rcvBuffer_partial, 0, (totalBytesReceived - 4));
+                                                richTextBox2.Text = Encoding.UTF7.GetString(rcvBuffer_partial, 0, totalBytesReceived - 4);
                                             }
                                             else
                                             {
@@ -166,15 +174,15 @@ namespace Socket_XML_Send_Receive
                                         }
                                         else
                                         {
-                                            richTextBox2.Text = Encoding.UTF7.GetString(rcvBuffer_partial, 0, (totalBytesReceived - 4));
+                                            richTextBox2.Text = Encoding.UTF7.GetString(rcvBuffer_partial, 0, totalBytesReceived - 4);
                                         }
                                         break;
                                     case "UTF8":
-                                        if ((checkBox2.Checked) && (label11.Text != ""))
+                                        if (checkBox2.Checked && (label11.Text != string.Empty))
                                         {
                                             if (Validation(label11.Text))
                                             {
-                                                richTextBox2.Text = Encoding.UTF8.GetString(rcvBuffer_partial, 0, (totalBytesReceived - 4));
+                                                richTextBox2.Text = Encoding.UTF8.GetString(rcvBuffer_partial, 0, totalBytesReceived - 4);
                                             }
                                             else
                                             {
@@ -183,15 +191,15 @@ namespace Socket_XML_Send_Receive
                                         }
                                         else
                                         {
-                                            richTextBox2.Text = Encoding.UTF8.GetString(rcvBuffer_partial, 0, (totalBytesReceived - 4));
+                                            richTextBox2.Text = Encoding.UTF8.GetString(rcvBuffer_partial, 0, totalBytesReceived - 4);
                                         }
                                         break;
                                     case "Unicode":
-                                        if ((checkBox2.Checked) && (label11.Text != ""))
+                                        if (checkBox2.Checked && (label11.Text != string.Empty))
                                         {
                                             if (Validation(label11.Text))
                                             {
-                                                richTextBox2.Text = Encoding.Unicode.GetString(rcvBuffer_partial, 0, (totalBytesReceived - 4));
+                                                richTextBox2.Text = Encoding.Unicode.GetString(rcvBuffer_partial, 0, totalBytesReceived - 4);
                                             }
                                             else
                                             {
@@ -200,11 +208,10 @@ namespace Socket_XML_Send_Receive
                                         }
                                         else
                                         {
-                                            richTextBox2.Text = Encoding.Unicode.GetString(rcvBuffer_partial, 0, (totalBytesReceived - 4));
+                                            richTextBox2.Text = Encoding.Unicode.GetString(rcvBuffer_partial, 0, totalBytesReceived - 4);
                                         }
                                         break;
                                     default:
-                                        //
                                         break;
                                 }
                                 Debug("SERVER: receptionat " + (totalBytesReceived - 4) + " bytes");
@@ -219,7 +226,7 @@ namespace Socket_XML_Send_Receive
                                 switch (comboBox1.Text)
                                 {
                                     case "ASCII":
-                                        if ((checkBox2.Checked) && (label11.Text != ""))
+                                        if (checkBox2.Checked && (label11.Text != string.Empty))
                                         {
                                             if (Validation(label11.Text))
                                             {
@@ -236,7 +243,7 @@ namespace Socket_XML_Send_Receive
                                         }
                                         break;
                                     case "UTF7":
-                                        if ((checkBox2.Checked) && (label11.Text != ""))
+                                        if (checkBox2.Checked && (label11.Text != string.Empty))
                                         {
                                             if (Validation(label11.Text))
                                             {
@@ -253,7 +260,7 @@ namespace Socket_XML_Send_Receive
                                         }
                                         break;
                                     case "UTF8":
-                                        if ((checkBox2.Checked) && (label11.Text != ""))
+                                        if (checkBox2.Checked && (label11.Text != string.Empty))
                                         {
                                             if (Validation(label11.Text))
                                             {
@@ -270,7 +277,7 @@ namespace Socket_XML_Send_Receive
                                         }
                                         break;
                                     case "Unicode":
-                                        if ((checkBox2.Checked) && (label11.Text != ""))
+                                        if (checkBox2.Checked && (label11.Text != string.Empty))
                                         {
                                             if (Validation(label11.Text))
                                             {
@@ -287,7 +294,6 @@ namespace Socket_XML_Send_Receive
                                         }
                                         break;
                                     default:
-                                        //
                                         break;
                                 }
                                 Debug("SERVER: receptionat " + totalBytesReceived + " bytes");
@@ -351,7 +357,6 @@ namespace Socket_XML_Send_Receive
                                 buff_full = Encoding.Unicode.GetBytes(richTextBox1.Text);
                                 break;
                             default:
-                                //
                                 break;
                         }
                         byte[] buff_partial = new byte[reqLen * 2 + 4];
@@ -379,7 +384,6 @@ namespace Socket_XML_Send_Receive
                                     richTextBox5.Text = Encoding.Unicode.GetString(buff_receive_partial, 0, buff_receive_partial.Length);
                                     break;
                                 default:
-                                    //
                                     break;
                             }
                             Debug("CLIENT: receptionat echo data de la server socket.");
@@ -403,7 +407,6 @@ namespace Socket_XML_Send_Receive
                                 buff_full = Encoding.Unicode.GetBytes(richTextBox1.Text);
                                 break;
                             default:
-                                //
                                 break;
                         }
                         server2.Send(buff_full, 0, buff_full.Length, SocketFlags.None);
@@ -428,7 +431,6 @@ namespace Socket_XML_Send_Receive
                                     richTextBox5.Text = Encoding.Unicode.GetString(buff_receive_partial, 0, buff_receive_partial.Length);
                                     break;
                                 default:
-                                    //
                                     break;
                             }
                             Debug("CLIENT: receptionat echo data de la server socket.");
@@ -454,10 +456,6 @@ namespace Socket_XML_Send_Receive
         }
 
         // metode de baza
-        public Form1()
-        {
-            InitializeComponent();
-        }
         private void checkBox2_CheckedChanged(object sender, EventArgs e)
         {
             if (checkBox2.Checked)
@@ -476,8 +474,8 @@ namespace Socket_XML_Send_Receive
                 richTextBox1.ReadOnly = false;
                 groupBox1.Enabled = false;
                 richTextBox4.Clear();
-                label3.Text = "";
-                label11.Text = "";
+                label3.Text = string.Empty;
+                label11.Text = string.Empty;
             }
         }
         private void Form1_Load(object sender, EventArgs e)
