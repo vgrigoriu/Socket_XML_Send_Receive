@@ -72,4 +72,7 @@
     <Rule Id="SA1101" Action="Hidden" />
     <Rule Id="SX1101" Action="Warning" />
   </Rules>
+  <Rules AnalyzerId="RefactoringEssentials" RuleNamespace="RefactoringEssentials">
+    <Rule Id="RECS0145" Action="None" />
+  </Rules>
 </RuleSet>
