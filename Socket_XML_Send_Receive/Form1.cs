@@ -64,7 +64,7 @@ namespace Socket_XML_Send_Receive
 
         private bool Validation(string file)
         {
-            XmlTextReader r = new XmlTextReader(file);
+            var r = new XmlTextReader(file);
             var v = new XmlReaderSettings();
             if (radioButton1.Checked)
             {
@@ -351,7 +351,7 @@ namespace Socket_XML_Send_Receive
             {
                 try
                 {
-                    IPEndPoint serverEndPoint = new IPEndPoint(IPAddress.Parse(ipExt), portSendExt);
+                    var serverEndPoint = new IPEndPoint(IPAddress.Parse(ipExt), portSendExt);
                     server2.Connect(serverEndPoint);
                     Debug("CLIENT: conectat la server socket <" + ipExt + ":" + portSendExt + ">");
                     if (checkBox1.Checked)
@@ -512,7 +512,7 @@ namespace Socket_XML_Send_Receive
         private void Button2_Click(object sender, EventArgs e)
         {
             int size = -1;
-            OpenFileDialog fDialog = new OpenFileDialog();
+            var fDialog = new OpenFileDialog();
             fDialog.Title = "Select XSD/DTD/XDR File";
             fDialog.Filter = "XSD Files|*.xsd|DTD Files|*.dtd|XDR Files|*.xdr";
             fDialog.ShowHelp = false;
@@ -581,7 +581,7 @@ namespace Socket_XML_Send_Receive
         private void Button5_Click(object sender, EventArgs e)
         {
             int size = -1;
-            OpenFileDialog fDialog = new OpenFileDialog();
+            var fDialog = new OpenFileDialog();
             fDialog.Title = "Select XML File";
             fDialog.Filter = "XML Files|*.xml";
             fDialog.ShowHelp = false;
