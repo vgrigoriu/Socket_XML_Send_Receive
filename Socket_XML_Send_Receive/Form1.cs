@@ -60,7 +60,7 @@ namespace Socket_XML_Send_Receive
         private bool Validation(string file)
         {
             XmlTextReader r = new XmlTextReader(file);
-            XmlValidatingReader v = new XmlValidatingReader(r);
+            var v = new XmlReaderSettings();
             //v.Schemas.Add(cache);
             if (radioButton1.Checked)
             {
@@ -72,17 +72,20 @@ namespace Socket_XML_Send_Receive
             }
             else //(radioButton3.Checked)
             {
-                v.ValidationType = ValidationType.XDR;
+                // This used to be XDR, but apud MSDN it's deprecated.
+                // So, no validation.
+                v.ValidationType = ValidationType.None;
             };
             v.ValidationEventHandler += new ValidationEventHandler(MyValidationEventHandler);
-            while (v.Read())
+            var xmlReader = XmlReader.Create(r, v);
+            while (xmlReader.Read())
             {
                 // Can add code here to process the content
                 // bool Success = true;
                 // Console.WriteLine("Validation finished. Validation {0}", (Success == true ? "successful" : "failed"));
                 // Path.GetExtension(label11.Text).Substring(1).ToUpper()
             };
-            v.Close();
+            xmlReader.Close();
             if (isValid)
             {
                 return true; //Document is valid
@@ -109,7 +112,7 @@ namespace Socket_XML_Send_Receive
                 catch (Exception ex)
                 {
                     Debug("SERVER: probleme creare server socket <" + textBox4.Text + ":" + port_listen_int.ToString() + ">");
-                    //Debug(ex.ToString());
+                    Debug(ex.ToString());
                 };
                 while (true)
                 {
@@ -310,7 +313,7 @@ namespace Socket_XML_Send_Receive
                     }
                     catch (Exception ex)
                     {
-                        //Debug(ex.ToString());
+                        Debug(ex.ToString());
                     }
                     finally
                     {
@@ -455,7 +458,7 @@ namespace Socket_XML_Send_Receive
                 catch (Exception ex)
                 {
                     Debug("CLIENT: probleme conectare/trimitere de la client la server socket <" + ip_ext + ":" + port_send_ext.ToString() + ">");
-                    //Debug(ex.ToString());
+                    Debug(ex.ToString());
                 }
                 finally
                 {
@@ -528,7 +531,7 @@ namespace Socket_XML_Send_Receive
                 catch (Exception ex)
                 {
                     Debug("Probleme incarcare/deschidere fisier XSD/DTD");
-                    //Debug(ex.ToString());
+                    Debug(ex.ToString());
                 };
             };
         }
@@ -600,7 +603,7 @@ namespace Socket_XML_Send_Receive
                 catch (Exception ex)
                 {
                     Debug("Probleme incarcare/deschidere fisier XML");
-                    //Debug(ex.ToString());
+                    Debug(ex.ToString());
                 };
             };
         }
