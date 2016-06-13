@@ -75,7 +75,7 @@ namespace Socket_XML_Send_Receive
                 // This used to be XDR, but apud MSDN it's deprecated.
                 // So, no validation.
                 v.ValidationType = ValidationType.None;
-            };
+            }
             v.ValidationEventHandler += new ValidationEventHandler(MyValidationEventHandler);
             var xmlReader = XmlReader.Create(r, v);
             while (xmlReader.Read())
@@ -84,7 +84,7 @@ namespace Socket_XML_Send_Receive
                 // bool Success = true;
                 // Console.WriteLine("Validation finished. Validation {0}", (Success == true ? "successful" : "failed"));
                 // Path.GetExtension(label11.Text).Substring(1).ToUpper()
-            };
+            }
             xmlReader.Close();
             if (isValid)
             {
@@ -93,9 +93,11 @@ namespace Socket_XML_Send_Receive
             else
             {
                 return false;//Document is invalid
-            };
+            }
         }
+#pragma warning disable RECS0135 // Function does not reach its end or a 'return' statement by any of possible execution paths
         private void Listener()
+#pragma warning restore RECS0135 // Function does not reach its end or a 'return' statement by any of possible execution paths
         {
             server1 = null;
             byte[] rcvBuffer_full = new byte[BUFSIZE_FULL];
@@ -107,13 +109,13 @@ namespace Socket_XML_Send_Receive
                 {
                     server1.Bind(new IPEndPoint(IPAddress.Parse(textBox4.Text), port_listen_int));
                     server1.Listen(BACKLOG);
-                    Debug("SERVER: socket <" + textBox4.Text + ":" + port_listen_int.ToString() + "> deschis");
+                    Debug("SERVER: socket <" + textBox4.Text + ":" + port_listen_int + "> deschis");
                 }
                 catch (Exception ex)
                 {
-                    Debug("SERVER: probleme creare server socket <" + textBox4.Text + ":" + port_listen_int.ToString() + ">");
+                    Debug("SERVER: probleme creare server socket <" + textBox4.Text + ":" + port_listen_int + ">");
                     Debug(ex.ToString());
-                };
+                }
                 while (true)
                 {
                     client1 = null;
@@ -130,9 +132,9 @@ namespace Socket_XML_Send_Receive
                                 if (totalBytesReceived >= rcvBuffer_full.Length)
                                 {
                                     break;
-                                };
+                                }
                                 totalBytesReceived += bytesRcvd;
-                            };
+                            }
                             Array.Copy(rcvBuffer_full, 4, rcvBuffer_partial, 0, totalBytesReceived - 4);
                             if (checkBox1.Checked)
                             {
@@ -148,7 +150,7 @@ namespace Socket_XML_Send_Receive
                                             else
                                             {
                                                 Debug("SERVER: eroare parsare XML via schema inclusa in antet");
-                                            };
+                                            }
                                         }
                                         else
                                         {
@@ -165,7 +167,7 @@ namespace Socket_XML_Send_Receive
                                             else
                                             {
                                                 Debug("SERVER: eroare parsare XML via schema inclusa in antet");
-                                            };
+                                            }
                                         }
                                         else
                                         {
@@ -182,7 +184,7 @@ namespace Socket_XML_Send_Receive
                                             else
                                             {
                                                 Debug("SERVER: eroare parsare XML via schema inclusa in antet");
-                                            };
+                                            }
                                         }
                                         else
                                         {
@@ -199,7 +201,7 @@ namespace Socket_XML_Send_Receive
                                             else
                                             {
                                                 Debug("SERVER: eroare parsare XML via schema inclusa in antet");
-                                            };
+                                            }
                                         }
                                         else
                                         {
@@ -209,7 +211,7 @@ namespace Socket_XML_Send_Receive
                                     default:
                                         //
                                         break;
-                                };
+                                }
                                 Debug("SERVER: receptionat " + (totalBytesReceived - 4) + " bytes");
                                 if (checkBox3.Checked)
                                 {
@@ -217,7 +219,7 @@ namespace Socket_XML_Send_Receive
                                     client1.Send(rcvBuffer_partial, 0, rcvBuffer_partial.Length, SocketFlags.None);
                                     Debug("SERVER: expediat echo data catre client.");
                                     */
-                                };
+                                }
                             }
                             else
                             {
@@ -233,7 +235,7 @@ namespace Socket_XML_Send_Receive
                                             else
                                             {
                                                 Debug("SERVER: eroare parsare XML via schema inclusa in antet");
-                                            };
+                                            }
                                         }
                                         else
                                         {
@@ -250,7 +252,7 @@ namespace Socket_XML_Send_Receive
                                             else
                                             {
                                                 Debug("SERVER: eroare parsare XML via schema inclusa in antet");
-                                            };
+                                            }
                                         }
                                         else
                                         {
@@ -267,7 +269,7 @@ namespace Socket_XML_Send_Receive
                                             else
                                             {
                                                 Debug("SERVER: eroare parsare XML via schema inclusa in antet");
-                                            };
+                                            }
                                         }
                                         else
                                         {
@@ -284,7 +286,7 @@ namespace Socket_XML_Send_Receive
                                             else
                                             {
                                                 Debug("SERVER: eroare parsare XML via schema inclusa in antet");
-                                            };
+                                            }
                                         }
                                         else
                                         {
@@ -294,7 +296,7 @@ namespace Socket_XML_Send_Receive
                                     default:
                                         //
                                         break;
-                                };
+                                }
                                 Debug("SERVER: receptionat " + totalBytesReceived + " bytes");
                                 if (checkBox3.Checked)
                                 {
@@ -302,13 +304,13 @@ namespace Socket_XML_Send_Receive
                                     client1.Send(rcvBuffer_partial, 0, rcvBuffer_partial.Length, SocketFlags.None);
                                     Debug("SERVER: expediat echo data catre client.");
                                     */
-                                };
-                            };
-                        };
+                                }
+                            }
+                        }
                         if (client1 != null)
                         {
                             client1.Close();
-                        };
+                        }
                         Debug("SERVER: client socket deconectat");
                     }
                     catch (Exception ex)
@@ -320,10 +322,10 @@ namespace Socket_XML_Send_Receive
                         if (client1 != null)
                         {
                             client1.Close();
-                        };
-                    };
-                };
-            };
+                        }
+                    }
+                }
+            }
         }
         private void Sender()
         {
@@ -336,7 +338,7 @@ namespace Socket_XML_Send_Receive
                 {
                     IPEndPoint serverEndPoint = new IPEndPoint(IPAddress.Parse(ip_ext), port_send_ext);
                     server2.Connect(serverEndPoint);
-                    Debug("CLIENT: conectat la server socket <" + ip_ext + ":" + port_send_ext.ToString() + ">");
+                    Debug("CLIENT: conectat la server socket <" + ip_ext + ":" + port_send_ext + ">");
                     if (checkBox1.Checked)
                     {
                         byte[] buff_full = null;
@@ -360,7 +362,7 @@ namespace Socket_XML_Send_Receive
                             default:
                                 //
                                 break;
-                        };
+                        }
                         byte[] buff_partial = new byte[reqLen * 2 + 4];
                         reqLenArray.CopyTo(buff_partial, 0);
                         buff_full.CopyTo(buff_partial, 4);
@@ -396,7 +398,7 @@ namespace Socket_XML_Send_Receive
                             //string resultString = new String(result);     
                             Debug("CLIENT: receptionat echo data de la server socket.");
                             */ 
-                        }; 
+                        }
                     }
                     else
                     {
@@ -418,7 +420,7 @@ namespace Socket_XML_Send_Receive
                             default:
                                 //
                                 break;
-                        };
+                        }
                         server2.Send(buff_full, 0, buff_full.Length, SocketFlags.None);
                         if (checkBox3.Checked)
                         {
@@ -451,13 +453,13 @@ namespace Socket_XML_Send_Receive
                             //string resultString = new String(result);     
                             Debug("CLIENT: receptionat echo data de la server socket.");
                             */ 
-                        };              
-                    };
+                        }
+                    }
                     Debug("CLIENT: date expediate de la client la server socket.");
                 }
                 catch (Exception ex)
                 {
-                    Debug("CLIENT: probleme conectare/trimitere de la client la server socket <" + ip_ext + ":" + port_send_ext.ToString() + ">");
+                    Debug("CLIENT: probleme conectare/trimitere de la client la server socket <" + ip_ext + ":" + port_send_ext + ">");
                     Debug(ex.ToString());
                 }
                 finally
@@ -467,8 +469,8 @@ namespace Socket_XML_Send_Receive
                         server2.Close();
                         ((IDisposable)server2).Dispose();
                         Debug("CLIENT: deconectat de la server socket");
-                    };
-                };
+                    }
+                }
             }
         }
 
@@ -497,7 +499,7 @@ namespace Socket_XML_Send_Receive
                 richTextBox4.Clear();
                 label3.Text = "";
                 label11.Text = "";
-            };
+            }
         }
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -532,8 +534,8 @@ namespace Socket_XML_Send_Receive
                 {
                     Debug("Probleme incarcare/deschidere fisier XSD/DTD");
                     Debug(ex.ToString());
-                };
-            };
+                }
+            }
         }
         private void button3_Click(object sender, EventArgs e)
         {
@@ -555,8 +557,8 @@ namespace Socket_XML_Send_Receive
                     {
                         server1.Close();
                         ((IDisposable)server1).Dispose();
-                        Debug("SERVER: socket <" + textBox4.Text + ":" + port_listen_int.ToString() + "> inchis");
-                    };
+                        Debug("SERVER: socket <" + textBox4.Text + ":" + port_listen_int + "> inchis");
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -565,8 +567,8 @@ namespace Socket_XML_Send_Receive
                 finally
                 {
                     workerThread1.Abort();
-                };
-            };
+                }
+            }
         }
         private void button1_Click(object sender, EventArgs e)
         {
@@ -604,8 +606,8 @@ namespace Socket_XML_Send_Receive
                 {
                     Debug("Probleme incarcare/deschidere fisier XML");
                     Debug(ex.ToString());
-                };
-            };
+                }
+            }
         }
         private void button7_Click(object sender, EventArgs e)
         {
@@ -621,7 +623,7 @@ namespace Socket_XML_Send_Receive
             if (button3.Text == "Listen OFF")
             {
                 button3_Click(sender, e);
-            };
+            }
         }
     }
 }
